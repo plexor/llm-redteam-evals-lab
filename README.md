@@ -25,6 +25,12 @@ python -m venv .venv
 source .venv/bin/activate  # (Windows: .venv\Scripts\activate)
 pip install -r requirements.txt
 python evals/run_eval.py --dataset datasets/prompts/jailbreak.jsonl --model gpt4o
+
+# quick subset + CSV + summary artifacts
+python evals/run_eval.py --dataset datasets/prompts/jailbreak.jsonl --model gpt4o --max-prompts 10 --format json+csv --summary
+
+# reproducible artifact names
+python evals/run_eval.py --dataset datasets/prompts/jailbreak.jsonl --model gpt4o --run-id baseline_week1
 ```
 
 ## Folder Structure
