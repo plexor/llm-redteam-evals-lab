@@ -111,6 +111,7 @@ def main() -> None:
     ap.add_argument("--model", required=True)
     ap.add_argument("--out", default="results")
     ap.add_argument("--max-prompts", type=positive_int, default=None, help="Limit number of prompts for quick runs")
+    ap.add_argument("--max-prompts", type=int, default=None, help="Limit number of prompts for quick runs")
     ap.add_argument(
         "--format",
         choices=("json", "json+csv"),
@@ -158,6 +159,23 @@ def main() -> None:
     if args.summary:
         summary = build_summary(results, str(dataset_path), args.model, run_id)
         summary_file = unique_artifact_path(out_dir, f"run_{run_id}_summary", "json")
+        summary_file.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+        print("Wrote:", summary_file)
+
+    results = build_results(prompts, args.model)
+
+    out_file = out_dir / f"run_{run_id}.json"
+    out_file.write_text(json.dumps(results, indent=2), encoding="utf-8")
+    print("Wrote:", out_file)
+
+    if args.format == "json+csv":
+        csv_file = out_dir / f"run_{run_id}.csv"
+        write_csv(csv_file, results)
+        print("Wrote:", csv_file)
+
+    if args.summary:
+        summary = build_summary(results, args.dataset, args.model, run_id)
+        summary_file = out_dir / f"run_{run_id}_summary.json"
         summary_file.write_text(json.dumps(summary, indent=2), encoding="utf-8")
         print("Wrote:", summary_file)
 
